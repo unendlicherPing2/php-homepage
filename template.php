@@ -43,9 +43,9 @@ $list_items = ob_get_clean();
         </header>
 
         <aside class="row-span-2 col-span-1 place-self-center">
-            <ol class="list-decimal list-inside">
+            <menu class="list-decimal list-inside">
                 <?php echo ($list_items) ?>
-            </ol>
+            </menu>
         </aside>
 
         <main class="row-span-2 col-span-2 place-self-center">

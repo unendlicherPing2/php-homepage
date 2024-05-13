@@ -2,6 +2,8 @@
 
 namespace router;
 
+$ENV = parse_ini_file(".env");
+
 $page = isset($_GET["page"]) ? $_GET["page"] : "Homepage";
 
 $dirs = scandir("page");
