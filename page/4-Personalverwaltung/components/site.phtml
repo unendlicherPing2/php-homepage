@@ -1,0 +1,45 @@
+<?php
+ob_start();
+
+foreach ($rows as $row) {
+    $row[5] = "🖊️";
+    $row[6] = "🚮";
+    require("page/4-Personalverwaltung/components/table_row.phtml");
+}
+
+$table_data = ob_get_clean();
+
+$forename = "";
+$surname = "";
+$wage = "";
+$gender = "Male";
+$method = $_SERVER["REQUEST_METHOD"] == "UPDATE" ? "UPDATE" : "INSERT";
+?>
+
+<table class="border-2">
+    <?php
+    $row = ["ID", "Forename", "Surname", "Wage", "Gender", "", ""];
+    require("page/4-Personalverwaltung/components/table_row.phtml");
+
+    echo ($table_data);
+    ?>
+</table>
+
+<div class="h-8"></div>
+
+<form method="GET" class="border-2 rounded-md w-min">
+    <input type="hidden" name="page" value="Personalverwaltung" />
+    <input type="hidden" name="execute" value=true />
+    <input type="hidden" name="method" value="<?php echo $method ?>" />
+
+    <input type="text" name="Forename" placeholder="Forename" value="<?php echo $forename ?>" required class="border-2 m-2 rounded-md" />
+    <input type="text" name="Surname" placeholder="Surname" value="<?php echo $surname ?>" required class="border-2 m-2 rounded-md" />
+    <input type="number" name="Wage" placeholder="Wage" value="<?php echo $wage ?>" required class="border-2 m-2 rounded-md" />
+    <select name="Gender" class="border-2 m-2 rounded-md w-11/12">
+        <option value="Male" <?php if ($gender == "Male") echo "selected" ?>>Male</option>
+        <option value="Female" <?php if ($gender == "Female") echo "selected" ?>>Female</option>
+        <option value="Diverse" <?php if ($gender == "Diverse") echo "selected" ?>>Diverse</option>
+    </select>
+
+    <button type="submit" class="text-center w-full">Submit</button>
+</form>

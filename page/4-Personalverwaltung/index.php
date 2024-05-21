@@ -1,54 +1,52 @@
 <?php
 $database = mysqli_connect("127.0.0.1", $ENV["USER"], $ENV["PASSWORD"], $ENV["DATABASE"]);
-$method = isset($_POST["method"]) ? $_POST["method"] : "GET";
+$method = isset($_GET["method"]) ? $_GET["method"] : "GET";
 
-if ($method == "INSERT") {
-    $result = mysqli_query($database, "INSERT INTO " . $ENV["TABLE"] . " (Forename, Surname, Wage, Gender)
-    VALUES ('" . $_POST["Forename"] . "', '" . $_POST["Surname"] . "', '" . $_POST["Wage"] . "', '" . $_POST["Gender"] . "')");
+function restore() {
+    header("Location: " . $_SERVER["PHP_SELF"] . "?page=Personalverwaltung");
+    exit();
 }
 
-if ($method == "DELETE") {
-    $result = mysqli_query($database, "DELETE FROM " . $ENV["TABLE"] . " WHERE ID = " . $_POST["id"] . ";");
+function handle_insert($database, $table)
+{
+    $result = mysqli_query($database, "INSERT INTO " . $table . " (Forename, Surname, Wage, Gender)
+    VALUES ('" . $_GET["Forename"] . "', '" . $_GET["Surname"] . "', '" . $_GET["Wage"] . "', '" . $_GET["Gender"] . "')");
+
+    restore();
 }
 
+function handle_delete($database, $table)
+{
+    if (isset($_GET["confirm"])) {
+        if ($_GET["confirm"] == "yes") mysqli_query($database, "DELETE FROM " . $table . " WHERE ID = " . $_GET["id"] . ";");
+    } else {
+        $result = mysqli_query($database, "SELECT * FROM " . $table . " WHERE ID = " . $_GET["id"]);
+        [$_, $forename, $surname, $_, $_] = mysqli_fetch_row($result);
 
-$result = mysqli_query($database, "SELECT * FROM " . $ENV["TABLE"]);
+        $text = "Do you want to delete " . $forename . " " . $surname . "?";
+        $confirm = $_SERVER["PHP_SELF"] . "?" . http_build_query($_GET) . "&confirm=yes";
+        $deny = $_SERVER["PHP_SELF"] . "?" . http_build_query($_GET) . "&confirm=no";
+    }
 
-$rows = mysqli_fetch_all($result);
-
-ob_start();
-
-foreach ($rows as $row) {
-    $row[5] = "🚮";
-    require("page/4-Personalverwaltung/components/table_row.phtml");
+    restore();
 }
 
-$table_data = ob_get_clean();
-?>
+function handle_update($database, $table) {
+    
+}
 
-<table class="border-2">
-    <?php
-    $row = ["ID", "Forename", "Surname", "Wage", "Gender", ""];
-    require("page/4-Personalverwaltung/components/table_row.phtml");
+function handle_get($database, $table)
+{
+    $result = mysqli_query($database, "SELECT * FROM " . $table);
 
-    echo ($table_data);
-    ?>
-</table>
+    $rows = mysqli_fetch_all($result);
 
-<div class="h-8"></div>
+    require("page/4-Personalverwaltung/components/site.phtml");
+}
 
-<form method="POST" class="border-2 rounded-md w-min">
-    <input type="hidden" name="page" value="Personalverwaltung" />
-    <input type="hidden" name="method" value="INSERT" />
-
-    <input type="text" name="Forename" placeholder="Forename" required class="border-2 m-2 rounded-md" />
-    <input type="text" name="Surname" placeholder="Surname" required class="border-2 m-2 rounded-md" />
-    <input type="number" name="Wage" placeholder="Wage" required class="border-2 m-2 rounded-md" />
-    <select name="Gender" class="border-2 m-2 rounded-md w-11/12">
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Diverse">Diverse</option>
-    </select>
-
-    <button type="submit" class="text-center w-full">Submit</button>
-</form>
+match ($method) {
+    "INSERT" => handle_insert($database, $ENV["TABLE"]),
+    "DELETE" => handle_delete($database, $ENV["TABLE"]),
+    "UPDATE" => handle_update($database, $ENV["TABLE"]),
+    "GET" => handle_get($database, $ENV["TABLE"]),
+};

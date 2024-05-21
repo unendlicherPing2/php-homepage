@@ -17,6 +17,10 @@ foreach ($pages as $page) {
 }
 
 $list_items = ob_get_clean();
+
+ob_start();
+require ($contentPath);
+$content = ob_get_clean();
 ?>
 
 <!DOCTYPE html>
@@ -49,7 +53,7 @@ $list_items = ob_get_clean();
         </aside>
 
         <main class="row-span-2 col-span-2 place-self-center">
-            <?php require ($contentPath); ?>
+            <?php echo $content ?>
         </main>
 
     </div>
