@@ -8,6 +8,7 @@
     if ($row[5] != "") echo ('<td class="border-2">
         <form method="GET">
             <input type="hidden" name="page" value="Personalverwaltung" />
+            <input type="hidden" name="id" value="' . $row[0] . '" />
             <input type="hidden" name="method" value="UPDATE" />
             <button type="submit">' . $row[5] . '</a>
         </form>

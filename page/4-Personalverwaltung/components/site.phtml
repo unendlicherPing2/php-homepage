@@ -9,11 +9,12 @@ foreach ($rows as $row) {
 
 $table_data = ob_get_clean();
 
-$forename = "";
-$surname = "";
-$wage = "";
-$gender = "Male";
-$method = $_SERVER["REQUEST_METHOD"] == "UPDATE" ? "UPDATE" : "INSERT";
+$id = $_GET["id"] ?? 0;
+$forename ??= "";
+$surname ??= "";
+$wage ??= "";
+$gender ??= "Male";
+$method = $_GET["method"] ?? "INSERT";
 ?>
 
 <table class="border-2">
@@ -31,6 +32,7 @@ $method = $_SERVER["REQUEST_METHOD"] == "UPDATE" ? "UPDATE" : "INSERT";
     <input type="hidden" name="page" value="Personalverwaltung" />
     <input type="hidden" name="execute" value=true />
     <input type="hidden" name="method" value="<?php echo $method ?>" />
+    <input type="hidden" name="id" value="<?php echo $id ?>" />
 
     <input type="text" name="Forename" placeholder="Forename" value="<?php echo $forename ?>" required class="border-2 m-2 rounded-md" />
     <input type="text" name="Surname" placeholder="Surname" value="<?php echo $surname ?>" required class="border-2 m-2 rounded-md" />
